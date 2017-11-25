@@ -39,3 +39,5 @@ router.post('/edit', function(req, res, next) {
         res.send("1");
     });
 });
+
+module.exports = router;
