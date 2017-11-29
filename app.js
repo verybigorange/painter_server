@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var proxy = require("http-proxy-middleware");
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -14,6 +15,11 @@ var news = require('./routes/news');
 var upload = require('./routes/upload');
 
 var app = express();
+
+// 将所有请求地址中的api替换成空
+app.use('/api', proxy({target: 'http://127.0.0.1:3000', changeOrigin: false,pathRewrite:{
+  '^/api':''
+}}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
