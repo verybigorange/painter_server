@@ -7,7 +7,7 @@ var router = express.Router();
 //上传图片
 router.post('/', function(req, res, next) {
     var form = new formidable.IncomingForm();
-    var targetFile = path.join(__dirname,'../public/img/');
+    var targetFile = path.join(__dirname,'../public/static/img/');
     form.uploadDir = targetFile;
     form.parse(req,function(err,fields,files){
         if(err) throw err;
@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
         fs.rename(oldpath,newpath,(err)=>{
             if(err) throw err;
             res.writeHead(200,{"Content-Type":"text/html;charset=UTF8"});
-            res.end('/api/img/'+filename);
+            res.end('/api/static/img/'+filename);
         })
     });
 });
