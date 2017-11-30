@@ -19,7 +19,6 @@ router.post('/', function(req, res, next) {
             res.send(obj);
         });
     });
- 
 });
 
 
@@ -64,8 +63,8 @@ router.post('/add', function(req, res, next) {
     let show = req.body.show;       //是否首页展示该作品
     let count =  req.body.count;    //作品浏览量
     let pic_name = req.body.pic_name; //图片名称
-    //let id =  new Date().getTime(); //作品id
-    query("INSERT INTO works (work_title,pic_url,work_type,home_show,view_count,pic_name) VALUES (',"+title+"','"+url+"','"+type+"','"+show+"',"+count+",'"+pic_name+"')", [1], function(err,results,fields){ 
+    // let id =  new Date().getTime(); //作品id
+    query("INSERT INTO works (work_title,pic_url,work_type,home_show,view_count,pic_name) VALUES ('"+title+"','"+url+"','"+type+"','"+show+"',"+count+",'"+pic_name+"')", [1], function(err,results,fields){ 
        if(results){
             res.send("1");
        }else{
@@ -115,7 +114,7 @@ router.post('/edit', function(req, res, next) {
 router.post('/delete_pic', function(req, res, next) {
     let pic_name = req.body.pic_name;  //数据库中的图片名称
     let id =  req.body.id;    //作品id
-    var url = path.join(__dirname,"../public/img/" + pic_name);
+    var url = path.join(__dirname,"../public/static/img/" + pic_name);
     fs.unlink(url, (err) => {
         if (err) throw err;
         //如果id存在，删除数据库中的图片url
