@@ -4,7 +4,7 @@ var router = express.Router();
 var query=require("./mysql_pool");  
 
 // 增加评论
-router.post('/', function(req, res, next) {
+router.post('/add', function(req, res, next) {
     let id = req.body.id;      //作品id，为了关联作品
     let comment = req.body.comment;        //评论内容
     let date = req.body.date;     //评论时间
@@ -13,24 +13,30 @@ router.post('/', function(req, res, next) {
     });
 });
 
-//查询作品评论
+
+
+// 查询作品评论
 router.post('/', function(req, res, next) {
     let limitNum = req.body.limit;
-    let str = limitNum?" LIMIT "+limitNum:"";
-    let id =  req.body.id;    //作品id
-    if(id){
-        query("SELECT * FROM comment WHERE work_id="+id+""+str, [1], function(err,results,fields){  
-            res.send(results);
+    let currentPage = req.body.currentPage;
+    let work_id = req.body.work_id;
+    // 当传了参数的就表示需要分页查询
+    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
+    let obj = {};
+    query("SELECT count(*) FROM comment", [1], function(err,results,fields){ 
+        obj.count = results[0]['count(*)'];   // 总条数
+        query("SELECT * FROM comment WHERE work_id="+work_id+str, [1], function(err,results,fields){
+            obj.list = results
+            res.send(obj);
         });
-    }else{
-        res.send("0");
-    }
+    });
 });
 
 //删除作品评论
 router.post('/delete', function(req, res, next) {
-    let id = req.body.id;  //评论id
-    query("DELETE FROM comment WHERE comment_id="+id+"", [1], function(err,results,fields){  
+    let comment_id = req.body.comment_id;  //评论id
+    query("DELETE FROM comment WHERE comment_id="+comment_id+"", [1], function(err,results,fields){
+        console.log(results) 
         res.send("1");
     });
 });
