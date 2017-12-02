@@ -36,7 +36,14 @@ router.post('/', function(req, res, next) {
 router.post('/delete', function(req, res, next) {
     let comment_id = req.body.comment_id;  //评论id
     query("DELETE FROM comment WHERE comment_id="+comment_id+"", [1], function(err,results,fields){
-        console.log(results) 
+        res.send("1");
+    });
+});
+
+//删除作品的全部评论
+router.post('/deleteAll', function(req, res, next) {
+    let work_id = req.body.work_id;  //评论id
+    query("DELETE FROM comment WHERE work_id="+work_id+"", [1], function(err,results,fields){
         res.send("1");
     });
 });
