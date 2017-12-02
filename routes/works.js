@@ -9,32 +9,32 @@ var query=require("./mysql_pool");
 router.post('/', function(req, res, next) {
     let limitNum = req.body.limit;
     let currentPage = req.body.currentPage;
+    let type = req.body.type;
     // 当传了参数的就表示需要分页查询
     let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
     let obj = {};
-    query("SELECT count(*) FROM works", [1], function(err,results,fields){ 
-        obj.count = results[0]['count(*)'];   // 总条数
-        query("SELECT * FROM works"+str, [1], function(err,results,fields){
-            obj.list = results
-            res.send(obj);
+    //类型存在则按类型来查询
+    if(type && type!="全部"){
+        query("SELECT count(*) FROM works WHERE work_type='"+type+"'", [1], function(err,results,fields){ 
+            obj.count = results[0]['count(*)'];   // 总条数
+            query("SELECT * FROM works WHERE work_type='"+type+"'"+str, [1], function(err,results,fields){
+                obj.list = results
+                res.send(obj);
+            });
         });
-    });
-});
-
-
-// 按类型查询
-router.post('/type', function(req, res, next) {
-    let limitNum = req.body.limit;
-    let str = limitNum?" LIMIT "+limitNum:"";
-    let type = req.body.type;
-    if(type){
-        query("SELECT * FROM works WHERE work_type='"+type+"'"+str, [1], function(err,results,fields){  
-            res.send(results);
-        });
+        //类型不存在则全部查询
     }else{
-        res.send("0");
+        query("SELECT count(*) FROM works", [1], function(err,results,fields){ 
+            obj.count = results[0]['count(*)'];   // 总条数
+            query("SELECT * FROM works"+str, [1], function(err,results,fields){
+                obj.list = results
+                res.send(obj);
+            });
+        });
     }
+   
 });
+
 
 //按作品id查询
 router.post('/id', function(req, res, next) {
@@ -70,28 +70,20 @@ router.post('/add', function(req, res, next) {
        }else{
            res.send("0");
        }
-        
+
     });
-   
 });
 
 //作品删除
 router.post('/delete', function(req, res, next) {
     let id = req.body.id;  //作品id
+    let pic_name = req.body.pic_name;  //数据库中的图片名称
     query("DELETE FROM works WHERE work_id="+id+"", [1], function(err,results,fields){  
-        // let limitNum = req.body.limit;
-        // let currentPage = req.body.currentPage;
-        // let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
-        // let obj = {};
-        // query("SELECT count(*) FROM works", [1], function(err,results,fields){ 
-        //     obj.count = results[0]['count(*)'];   // 总条数
-        //     query("SELECT * FROM works"+str, [1], function(err,results,fields){
-        //         obj.list = results
-        //         res.send(obj);
-        //     });
-        // });
-       
-        res.send("1");
+        var url = path.join(__dirname,"../public/static/img/" + pic_name);
+        fs.unlink(url, (err) => {
+            if (err) throw err;
+            res.send("1")
+        });
     });
 });
 
@@ -113,18 +105,11 @@ router.post('/edit', function(req, res, next) {
 //把上传了的图片删除
 router.post('/delete_pic', function(req, res, next) {
     let pic_name = req.body.pic_name;  //数据库中的图片名称
-    let id =  req.body.id;    //作品id
+    let id =  req.body.id;    //相片id
     var url = path.join(__dirname,"../public/static/img/" + pic_name);
     fs.unlink(url, (err) => {
         if (err) throw err;
-        //如果id存在，删除数据库中的图片url
-        if(id){
-            query("UPDATE works SET pic_url='' WHERE work_id="+id+"", [1], function(err,results,fields){
-                res.send("1");
-            });
-        }else{
-            res.send("1");
-        }
+        res.send("1")
     });
 });
 
