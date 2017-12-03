@@ -40,41 +40,55 @@ router.use("/ue", ueditor(path.join(__dirname, '../public'), function (req, res,
     }
 }));
 
-// router.get('/', function(req, res, next) {
-//     console.log(req)
-//     res.send("1")
-// });
-
-// router.post('/', function(req, res, next) {
-//     console.log("1111111")
-//     res.send("1")
-// });
 
 // 增加新闻
-// router.post('/', function(req, res, next) {
-//     let title = req.body.title;        //评论内容
-//     let content = req.body.content;     //评论时间
-//     query("INSERT INTO news (news_title,news_content) VALUES ("+title+",'"+content+")", [1], function(err,results,fields){ 
-//         res.send("1");
-//     });
-// });
+router.post('/add', function(req, res, next) {
+    let title = req.body.title;        //新闻标题
+    let content = req.body.content;     //新闻内容
+    let date = req.body.date;   //新闻时间
+    let plainText = req.body.plainText //存文本
+    date = date.substr(0,10)+' '+date.substr(11,8);
+    query("INSERT INTO news (news_title,news_content,news_date,news_plainText) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"')", [1], function(err,results,fields){ 
+        res.send("1");
+    });
+});
 
 //查询新闻,可以接受限制的条件
-// router.post('/', function(req, res, next) {
-//     let limitNum = req.body.limit;
-//     let str = limitNum?" LIMIT "+limitNum:"";
-//     query("SELECT * FROM news"+str, [1], function(err,results,fields){  
-//         res.send(results);
-//     });
-// });
+router.post('/', function(req, res, next) {
+    let limitNum = req.body.limit;
+    let currentPage = req.body.currentPage;
+    // 当传了参数的就表示需要分页查询
+    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
+    let obj = {};
+    query("SELECT count(*) FROM news", [1], function(err,results,fields){ 
+        obj.count = results[0]['count(*)'];   // 总条数
+        query("SELECT * FROM news"+str, [1], function(err,results,fields){
+            obj.list = results
+            res.send(obj);
+        });
+    });
+});
+
+
+//按新闻id查询
+router.post('/id', function(req, res, next) {
+    let id = req.body.id*1;
+    if(id){
+        query("SELECT * FROM news WHERE news_id="+id+"", [1], function(err,results,fields){
+            res.send(results);
+        });
+    }else{
+        res.send("0");
+    }
+});
 
 //删除新闻
-// router.post('/delete', function(req, res, next) {
-//     let id = req.body.id;  //新闻id
-//     query("DELETE FROM news WHERE news_id="+id+"", [1], function(err,results,fields){  
-//         res.send("1");
-//     });
-// });
+router.post('/delete', function(req, res, next) {
+    let id = req.body.id;  //作品id
+    query("DELETE FROM news WHERE news_id="+id+"", [1], function(err,results,fields){  
+        res.send("1")
+    });
+});
 
 // 编辑新闻
 // router.post('/', function(req, res, next) {
