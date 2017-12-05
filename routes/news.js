@@ -46,7 +46,7 @@ router.post('/add', function(req, res, next) {
     let title = req.body.title;        //新闻标题
     let content = req.body.content;     //新闻内容
     let date = req.body.date;   //新闻时间
-    let plainText = req.body.plainText //存文本
+    let plainText = req.body.plainText //纯文本
     date = date.substr(0,10)+' '+date.substr(11,8);
     query("INSERT INTO news (news_title,news_content,news_date,news_plainText) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"')", [1], function(err,results,fields){ 
         res.send("1");
@@ -91,13 +91,15 @@ router.post('/delete', function(req, res, next) {
 });
 
 // 编辑新闻
-// router.post('/', function(req, res, next) {
-//     let id =  req.body.id;    //新闻id
-//     let title = req.body.title;     //新闻标题
-//     let content = req.body.content;       //新闻内容
-//     query("UPDATE news SET news_title='"+title+"',news_content='"+content+"' WHERE news_id="+id+"", [1], function(err,results,fields){
-//         res.send("1");
-//     });
-// });
-
+router.post('/edit', function(req, res, next) {
+    let id =  req.body.id;    //新闻id
+    let title = req.body.title;        //新闻标题
+    let content = req.body.content;     //新闻内容
+    let date = req.body.date;   //新闻时间
+    let plainText = req.body.plainText //纯文本
+    date = date.substr(0,10)+' '+date.substr(11,8);
+    query("UPDATE news SET news_title='"+title+"',news_content='"+content+"',news_date='"+date+"',news_plainText='"+plainText+"' WHERE news_id="+id+"", [1], function(err,results,fields){
+        res.send("1");
+    });
+});
 module.exports = router;
