@@ -4,11 +4,22 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var proxy = require("http-proxy-middleware");
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var works = require('./routes/works');
+var comment = require('./routes/comment');
+var photo = require('./routes/photo');
+var news = require('./routes/news');
+var upload = require('./routes/upload');
 
 var app = express();
+
+// 将所有请求地址中的api替换成空
+app.use('/api', proxy({target: 'http://127.0.0.1:3000', changeOrigin: false,pathRewrite:{
+  '^/api':''
+}}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +35,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/works', works);
+app.use('/comment', comment);
+app.use('/photo', photo);
+app.use('/news', news);
+app.use('/upload', upload);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
