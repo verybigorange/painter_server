@@ -48,6 +48,13 @@ router.post('/id', function(req, res, next) {
     }
 });
 
+//查询需要首页显示的图片
+router.post('/home_show', function(req, res, next) {
+    query("SELECT * FROM works WHERE home_show='1'", [1], function(err,results,fields){
+        res.send(results);
+    });
+});
+
 //按首页展示查询
 router.post('/show', function(req, res, next) {
     query("SELECT * FROM works WHERE home_show='1'", [1], function(err,results,fields){  
