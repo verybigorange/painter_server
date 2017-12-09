@@ -47,8 +47,10 @@ router.post('/add', function(req, res, next) {
     let content = req.body.content;     //新闻内容
     let date = req.body.date;   //新闻时间
     let plainText = req.body.plainText //纯文本
+    let pic_name = req.body.pic_name; //图片名称
+    let url = req.body.url;        //图片地址
     date = date.substr(0,10)+' '+date.substr(11,8);
-    query("INSERT INTO news (news_title,news_content,news_date,news_plainText) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"')", [1], function(err,results,fields){ 
+    query("INSERT INTO news (news_title,news_content,news_date,news_plainText,pic_name,pic_url) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"','"+pic_name+"','"+url+"')", [1], function(err,results,fields){ 
         res.send("1");
     });
 });
@@ -84,9 +86,19 @@ router.post('/id', function(req, res, next) {
 
 //删除新闻
 router.post('/delete', function(req, res, next) {
-    let id = req.body.id;  //作品id
-    query("DELETE FROM news WHERE news_id="+id+"", [1], function(err,results,fields){  
-        res.send("1")
+    let id = req.body.id;  //新闻id
+       
+    query("DELETE FROM news WHERE news_id="+id+"", [1], function(err,results,fields){
+        if(req.body.pic_name){
+            let pic_name = req.body.pic_name;  //数据库中的图片名称
+            var url = path.join(__dirname,"../public/static/img/" + pic_name);
+            fs.unlink(url, (err) => {
+                if (err) throw err;
+                res.send("1")
+            });
+        }else{
+            res.send("1")
+        } 
     });
 });
 
@@ -97,8 +109,11 @@ router.post('/edit', function(req, res, next) {
     let content = req.body.content;     //新闻内容
     let date = req.body.date;   //新闻时间
     let plainText = req.body.plainText //纯文本
+    let pic_name = req.body.pic_name; //图片名称
+    let url = req.body.url;        //图片地址
     date = date.substr(0,10)+' '+date.substr(11,8);
-    query("UPDATE news SET news_title='"+title+"',news_content='"+content+"',news_date='"+date+"',news_plainText='"+plainText+"' WHERE news_id="+id+"", [1], function(err,results,fields){
+    
+    query("UPDATE news SET news_title='"+title+"',news_content='"+content+"',news_date='"+date+"',news_plainText='"+plainText+"',pic_name='"+pic_name+"',pic_url='"+url+"' WHERE news_id="+id+"", [1], function(err,results,fields){
         res.send("1");
     });
 });
