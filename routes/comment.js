@@ -3,11 +3,13 @@ var router = express.Router();
 
 var query=require("./mysql_pool");  
 
+var getNowFormatDate = require('../lib/getNowFormatDate.js')
+
 // 增加评论
 router.post('/add', function(req, res, next) {
     let id = req.body.id;      //作品id，为了关联作品
     let comment = req.body.comment;        //评论内容
-    let date = req.body.date;     //评论时间
+    let date = getNowFormatDate();     //评论时间
     query("INSERT INTO comment (work_id,comment,comment_date) VALUES ("+id+",'"+comment+"','"+date+"')", [1], function(err,results,fields){ 
         res.send("1");
     });
