@@ -117,14 +117,17 @@ router.post('/edit', function(req, res, next) {
 router.post('/delete_pic', function(req, res, next) {
     try {
         let pic_name = req.body.pic_name;  //数据库中的图片名称
-        let id =  req.body.id;    //相片id
-        var url = path.join(__dirname,"../public/static/img/" + pic_name);
-        fs.unlink(url, (err) => {
-            if (err) throw err;
-            res.send("1")
-        });
+        if(pic_name){
+            var url = path.join(__dirname,"../public/static/img/" + pic_name);
+            fs.unlink(url, (err) => {
+                if (err) throw err;
+                res.send("1")
+            });
+        }else{
+            res.send("no")
+        }   
     } catch (error) {
-        console.log(error)
+        res.send("0");
     }
    
 });
