@@ -41,6 +41,14 @@ app.use('/photo', photo);
 app.use('/news', news);
 app.use('/upload', upload);
 
+// 捕获错误
+process.on('uncaughtException', function (err) {
+  //打印出错误
+  console.log(err);
+  //打印出错误的调用栈方便调试
+  console.log(err.stack);
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
