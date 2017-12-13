@@ -10,8 +10,12 @@ router.post('/add', function(req, res, next) {
     let id = req.body.id;      //作品id，为了关联作品
     let comment = req.body.comment;        //评论内容
     let date = getNowFormatDate();     //评论时间
-    query("INSERT INTO comment (work_id,comment,comment_date) VALUES ("+id+",'"+comment+"','"+date+"')", [1], function(err,results,fields){ 
-        res.send("1");
+    query("INSERT INTO comment (work_id,comment,comment_date) VALUES ("+id+",'"+comment+"','"+date+"')", [1], function(err,results,fields){
+        if(!err && results.affectedRows==1){
+            res.send("1");
+        } else{
+            res.send("0");
+        }
     });
 });
 
@@ -38,7 +42,12 @@ router.post('/', function(req, res, next) {
 router.post('/delete', function(req, res, next) {
     let comment_id = req.body.comment_id;  //评论id
     query("DELETE FROM comment WHERE comment_id="+comment_id+"", [1], function(err,results,fields){
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
+        
     });
 });
 
@@ -46,7 +55,11 @@ router.post('/delete', function(req, res, next) {
 router.post('/deleteAll', function(req, res, next) {
     let work_id = req.body.work_id;  //评论id
     query("DELETE FROM comment WHERE work_id="+work_id+"", [1], function(err,results,fields){
-        res.send("1");
+        if(results.affectedRows>=1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
     });
 });
 

@@ -51,7 +51,11 @@ router.post('/add', function(req, res, next) {
     let url = req.body.url;        //图片地址
     date = date.substr(0,10)+' '+date.substr(11,8);
     query("INSERT INTO news (news_title,news_content,news_date,news_plainText,pic_name,pic_url) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"','"+pic_name+"','"+url+"')", [1], function(err,results,fields){ 
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
     });
 });
 
@@ -93,11 +97,18 @@ router.post('/delete', function(req, res, next) {
             let pic_name = req.body.pic_name;  //数据库中的图片名称
             var url = path.join(__dirname,"../public/static/img/" + pic_name);
             fs.unlink(url, (err) => {
-                if (err) throw err;
-                res.send("1")
+                if(results.affectedRows==1 && !err){
+                    res.send("1");
+                }else{
+                    res.send("0");
+                }
             });
         }else{
-            res.send("1")
+            if(results.affectedRows==1 && !err){
+                res.send("1");
+            }else{
+                res.send("0");
+            }
         } 
     });
 });
@@ -114,7 +125,11 @@ router.post('/edit', function(req, res, next) {
     date = date.substr(0,10)+' '+date.substr(11,8);
     
     query("UPDATE news SET news_title='"+title+"',news_content='"+content+"',news_date='"+date+"',news_plainText='"+plainText+"',pic_name='"+pic_name+"',pic_url='"+url+"' WHERE news_id="+id+"", [1], function(err,results,fields){
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
     });
 });
 module.exports = router;

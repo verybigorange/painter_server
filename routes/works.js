@@ -72,7 +72,7 @@ router.post('/add', function(req, res, next) {
     let pic_name = req.body.pic_name; //图片名称
     // let id =  new Date().getTime(); //作品id
     query("INSERT INTO works (work_title,pic_url,work_type,home_show,view_count,pic_name) VALUES ('"+title+"','"+url+"','"+type+"','"+show+"',"+count+",'"+pic_name+"')", [1], function(err,results,fields){ 
-       if(results){
+       if(results && results.affectedRows==1){
             res.send("1");
        }else{
            res.send("0");
@@ -89,11 +89,18 @@ router.post('/delete', function(req, res, next) {
             let pic_name = req.body.pic_name;  //数据库中的图片名称
             var url = path.join(__dirname,"../public/static/img/" + pic_name);
             fs.unlink(url, (err) => {
-                if (err) throw err;
-                res.send("1")
+                if (!err && results.affectedRows==1){
+                    res.send("1")
+                }else{
+                    res.send("0")
+                }
             });
         }else{
-            res.send("1")
+            if(results.affectedRows==1){
+                res.send("1")
+            }else{
+                res.send("0");
+            } 
         } 
     });
 });
@@ -108,7 +115,11 @@ router.post('/edit', function(req, res, next) {
     let count =  req.body.count;    //作品浏览量
     let pic_name = req.body.pic_name; //图片名称
     query("UPDATE works SET work_title='"+title+"',view_count='"+count+"',pic_url='"+url+"',work_type='"+type+"',home_show='"+show+"',pic_name='"+pic_name+"' WHERE work_id="+id+"", [1], function(err,results,fields){
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }    
     });
 });
 

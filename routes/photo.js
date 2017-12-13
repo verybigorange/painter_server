@@ -42,7 +42,11 @@ router.post('/add', function(req, res, next) {
     let title = req.body.title;     //图片标题
     let pic_name = req.body.pic_name //图片名称
     query("INSERT INTO photo (pic_title,pic_url,pic_name) VALUES ('"+title+"','"+url+"','"+pic_name+"')", [1], function(err,results,fields){ 
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
     });
 });
 
@@ -50,11 +54,14 @@ router.post('/add', function(req, res, next) {
 router.post('/delete', function(req, res, next) {
     let id = req.body.id;  //照片id
     let pic_name = req.body.pic_name;  //数据库中的图片名称
-    query("DELETE FROM photo WHERE pic_id="+id+"", [1], function(err,results,fields){  
+    query("DELETE FROM photo WHERE pic_id="+id+"", [1], function(err,results,fields){ 
         var url = path.join(__dirname,"../public/static/img/" + pic_name);
             fs.unlink(url, (err) => {
-                if (err) throw err;
-                res.send("1")
+                if(results.affectedRows==1 && !err){
+                    res.send("1")
+                }else{
+                    res.send("0");
+                }
             });
         });
 });
@@ -66,7 +73,11 @@ router.post('/edit', function(req, res, next) {
     let title = req.body.title;     //图片标题
     let pic_name = req.body.pic_name; //图片名称
     query("UPDATE photo SET pic_title='"+title+"',pic_url='"+url+"',pic_name='"+pic_name+"' WHERE pic_id="+id+"", [1], function(err,results,fields){
-        res.send("1");
+        if(results.affectedRows==1 && !err){
+            res.send("1");
+        }else{
+            res.send("0");
+        }
     });
 });
 
