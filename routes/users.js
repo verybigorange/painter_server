@@ -24,7 +24,7 @@ router.post('/change', function(req, res, next) {
       // 修改
       query("UPDATE user SET password='"+newPsd+"' WHERE username='admin'", [1], function(err,results,fields){
         // 修改密码成功
-        if(results.affectedRows == 1){
+        if(results.affectedRows == 1 && !err){
           res.send("1");
         }else{
           res.send("0");
