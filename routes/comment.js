@@ -11,8 +11,11 @@ router.post('/add', function(req, res, next) {
     let comment = req.body.comment;        //评论内容
     let date = getNowFormatDate();     //评论时间
     query("INSERT INTO comment (work_id,comment,comment_date) VALUES ("+id+",'"+comment+"','"+date+"')", [1], function(err,results,fields){
+        let obj = {};
+        obj["comment"] = comment;
+        obj["comment_date"] = date;
         if(!err && results.affectedRows==1){
-            res.send("1");
+            res.send(obj);
         } else{
             res.send("0");
         }
