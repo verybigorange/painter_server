@@ -96,7 +96,7 @@ router.post('/delete', function(req, res, next) {
                 }
             });
         }else{
-            if(results.affectedRows==1){
+            if(results.affectedRows==1 && !err){
                 res.send("1")
             }else{
                 res.send("0");

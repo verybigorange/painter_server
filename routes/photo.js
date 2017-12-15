@@ -55,6 +55,14 @@ router.post('/delete', function(req, res, next) {
     let id = req.body.id;  //照片id
     let pic_name = req.body.pic_name;  //数据库中的图片名称
     query("DELETE FROM photo WHERE pic_id="+id+"", [1], function(err,results,fields){ 
+        if(!pic_name){
+            if(results.affectedRows==1 && !err){
+                res.send("1")
+            }else{
+                res.send("0");
+            }
+            return
+        }
         var url = path.join(__dirname,"../public/static/img/" + pic_name);
             fs.unlink(url, (err) => {
                 if(results.affectedRows==1 && !err){
