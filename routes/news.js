@@ -64,7 +64,7 @@ router.post('/', function(req, res, next) {
     let limitNum = req.body.limit;
     let currentPage = req.body.currentPage;
     // 当传了参数的就表示需要分页查询
-    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
+    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+limitNum:"";
     let obj = {};
     query("SELECT count(*) FROM news", [1], function(err,results,fields){ 
         obj.count = results[0]['count(*)'];   // 总条数

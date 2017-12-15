@@ -11,7 +11,7 @@ router.post('/', function(req, res, next) {
     let currentPage = req.body.currentPage;
     let type = req.body.type;
     // 当传了参数的就表示需要分页查询
-    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+currentPage*limitNum:"";
+    let str = limitNum?" LIMIT "+(currentPage-1)*limitNum+","+limitNum:"";
     let obj = {};
     //类型存在则按类型来查询
     if(type && type!="全部"){
