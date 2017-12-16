@@ -41,7 +41,15 @@ router.post('/id', function(req, res, next) {
     let id = req.body.id*1;
     if(id){
         query("SELECT * FROM works WHERE work_id="+id+"", [1], function(err,results,fields){
-            res.send(results);
+            let data = results;
+            let count = (results[0]['view_count']*1+1)+"";
+            query("UPDATE works SET view_count='"+count+"' WHERE work_id="+id+"", [1], function(err,results,fields){
+                if(results.affectedRows==1 && !err && data){
+                    res.send(data);
+                }else{
+                    res.send("0");
+                }    
+            });
         });
     }else{
         res.send("0");
