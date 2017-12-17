@@ -17,7 +17,7 @@ var upload = require('./routes/upload');
 var app = express();
 
 // 将所有请求地址中的api替换成空
-app.use('/api', proxy({target: 'http://127.0.0.1:3000', changeOrigin: false,pathRewrite:{
+app.use('/api', proxy({target: 'http://127.0.0.1:80', changeOrigin: false,pathRewrite:{
   '^/api':''
 }}));
 
