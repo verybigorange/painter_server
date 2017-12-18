@@ -41,6 +41,26 @@ router.use("/ue", ueditor(path.join(__dirname, '../public'), function (req, res,
 }));
 
 
+function convertUTCTimeToLocalTime(UTCDateString) {
+    if(!UTCDateString){
+      return '-';
+    }
+    function formatFunc(str) {    //格式化显示
+      return str > 9 ? str : '0' + str
+    }
+    var date2 = new Date(UTCDateString);     //这步是关键
+    var year = date2.getFullYear();
+    var mon = formatFunc(date2.getMonth() + 1);
+    var day = formatFunc(date2.getDate());
+    var hour = date2.getHours();
+    // var noon = hour >= 12 ? 'PM' : 'AM';
+    // hour = hour>=12?hour-12:hour;
+    hour = formatFunc(hour);
+    var min = formatFunc(date2.getMinutes());
+    var dateStr = year+'-'+mon+'-'+day+'  '+hour+':'+min;
+    return dateStr;
+}
+
 // 增加新闻
 router.post('/add', function(req, res, next) {
     let title = req.body.title;        //新闻标题
@@ -49,7 +69,7 @@ router.post('/add', function(req, res, next) {
     let plainText = req.body.plainText //纯文本
     let pic_name = req.body.pic_name; //图片名称
     let url = req.body.url;        //图片地址
-    date = date.substr(0,10)+' '+date.substr(11,8);
+    date = convertUTCTimeToLocalTime(date);
     query("INSERT INTO news (news_title,news_content,news_date,news_plainText,pic_name,pic_url) VALUES ('"+title+"','"+content+"','"+date+"','"+plainText+"','"+pic_name+"','"+url+"')", [1], function(err,results,fields){ 
         if(results.affectedRows==1 && !err){
             res.send("1");
